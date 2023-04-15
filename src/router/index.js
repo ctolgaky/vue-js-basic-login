@@ -6,22 +6,39 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: "/openpage",
+    name: "OpenPage",
+    component: () => import("../components/OpenPage.vue")
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: () => import("../views/LoginView.vue")
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: () => import("../views/RegisterView.vue")
+  },
+  {
     path: '/',
     name: 'home',
     component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   }
 ]
 
 const router = new VueRouter({
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.access_token;
+  if (to.name !== 'Login' && to.name !== 'Register' && (!token)) {
+    localStorage.clear()
+    next({ name: 'Login' })
+  } else {
+    next()
+  }
 })
 
 export default router
